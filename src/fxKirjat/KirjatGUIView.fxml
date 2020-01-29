@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import fi.jyu.mit.fxgui.ListChooser?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="fxKirjat.KirjatGUIController">
+   <bottom>
+      <HBox spacing="10.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+         <children>
+            <Button mnemonicParsing="false" text="Lisää kirja">
+               <tooltip>
+                  <Tooltip text="Lisää kirja kokoelmaan" />
+               </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" text="Poista kirja">
+               <tooltip>
+                  <Tooltip text="Poista kirja kokoelmasta" />
+               </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" text="Muokkaa kirjan tietoja">
+               <tooltip>
+                  <Tooltip text="Muokkaa kirjaa" />
+               </tooltip>
+            </Button>
+         </children>
+      </HBox>
+   </bottom>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Tiedosto">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Avaa" />
+                  <MenuItem mnemonicParsing="false" text="Tallenna" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Muokkaa">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Lisää kirja" />
+                  <MenuItem mnemonicParsing="false" text="Poista kirja" />
+                  <MenuItem mnemonicParsing="false" text="Muokkaa kirjan tietoja" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Ohje">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Ohje" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <left>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <BorderPane BorderPane.alignment="CENTER">
+               <top>
+                  <Label text="Haku" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </top>
+               <center>
+                  <TextField BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" />
+                     </BorderPane.margin>
+                  </TextField>
+               </center>
+               <bottom>
+                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Kirjan nimi" BorderPane.alignment="CENTER">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Kirjan nimi" />
+                      <MenuItem mnemonicParsing="false" text="Kirjailija" />
+                    </items>
+                     <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" />
+                     </BorderPane.margin>
+                  </SplitMenuButton>
+               </bottom>
+            </BorderPane>
+         </top>
+         <bottom>
+            <ListChooser rivit="Suuri lammasseikkailu&#10;Maps of meaning&#10;Crime and punishment&#10;Kafka rannalla&#10;Norwegian Wood&#10;" BorderPane.alignment="CENTER" />
+         </bottom>
+         <center>
+            <Label maxHeight="-Infinity" text="Kirjat" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="5.0" />
+               </BorderPane.margin>
+            </Label>
+         </center>
+      </BorderPane>
+   </left>
+   <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+               <content>
+                  <GridPane hgap="10.0">
+                    <columnConstraints>
+                      <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+                      <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <padding>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <Label text="Nimi" />
+                        <Label text="Kirjailija" GridPane.rowIndex="1" />
+                        <Label text="Kustantaja" GridPane.rowIndex="2" />
+                        <Label text="Vuosi" GridPane.rowIndex="3" />
+                        <Label text="Sivumäärä" GridPane.rowIndex="4" />
+                        <Label text="Kieli" GridPane.rowIndex="5" />
+                        <Label text="Arvio 0-5" GridPane.rowIndex="6" />
+                        <TextField text="Suuri lammasseikkailu" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                        <TextField text="Haruki Murakami" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                        <TextField text="Tammi" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                        <TextField text="2009" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                        <TextField text="352" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                        <TextField text="suomi" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
+                        <TextField text="4" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                     </children>
+                  </GridPane>
+               </content>
+            </ScrollPane>
+         </center>
+         <top>
+            <Label text="Kirjan tiedot" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </BorderPane.margin>
+            </Label>
+         </top>
+      </BorderPane>
+   </center>
+   <right>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <top>
+            <Label text="Kirjailijan muut teokset" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </BorderPane.margin>
+            </Label>
+         </top>
+         <center>
+            <ListChooser rivit="Kafka rannalla&#10;Norwegian Wood" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </right>
+</BorderPane>

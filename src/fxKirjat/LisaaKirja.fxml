@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxKirjat.MuokkausController">
    <top>
       <Label text="Lisää kirja" BorderPane.alignment="CENTER">
          <padding>
@@ -55,17 +55,17 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField alignment="TOP_LEFT" text="Norwegian Wood" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
+                  <TextField alignment="TOP_LEFT" text="" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="Haruki Murakami" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+                  <TextField text="" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="Random House UK" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+                  <TextField text="" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
@@ -90,22 +90,22 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField text="2013" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <TextField text="" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="400" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <TextField text="" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="englanti" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <TextField text="" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="4" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                  <TextField text="" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
@@ -118,8 +118,8 @@
    <bottom>
       <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <buttons>
-          <Button mnemonicParsing="false" text="Tallenna" />
-            <Button mnemonicParsing="false" text="Peruuta" />
+          <Button mnemonicParsing="false" onAction="#handleTallenna" text="Tallenna" />
+            <Button mnemonicParsing="false" onAction="#handlePeruuta" text="Peruuta" />
         </buttons>
          <BorderPane.margin>
             <Insets right="7.0" />

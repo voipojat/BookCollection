@@ -17,25 +17,24 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="fxKirjat.KirjatGUIController">
+<BorderPane prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxKirjat.KirjatGUIController">
    <bottom>
       <HBox spacing="10.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
          <children>
-            <Button mnemonicParsing="false" text="Lisää kirja">
+            <Button mnemonicParsing="false" onAction="#handleLisaaKirja" text="Lisää kirja">
                <tooltip>
                   <Tooltip text="Lisää kirja kokoelmaan" />
                </tooltip>
             </Button>
-            <Button mnemonicParsing="false" text="Poista kirja">
+            <Button mnemonicParsing="false" onAction="#handlePoistaKirja" text="Poista kirja">
                <tooltip>
                   <Tooltip text="Poista kirja kokoelmasta" />
                </tooltip>
             </Button>
-            <Button mnemonicParsing="false" text="Muokkaa kirjan tietoja">
+            <Button mnemonicParsing="false" onAction="#handleMuokkaaKirjaa" text="Muokkaa kirjan tietoja">
                <tooltip>
                   <Tooltip text="Muokkaa kirjaa" />
                </tooltip>
@@ -48,20 +47,20 @@
         <menus>
           <Menu mnemonicParsing="false" text="Tiedosto">
             <items>
-              <MenuItem mnemonicParsing="false" text="Avaa" />
-                  <MenuItem mnemonicParsing="false" text="Tallenna" />
+              <MenuItem mnemonicParsing="false" onAction="#handleAvaa" text="Avaa" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleTallenna" text="Tallenna" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Muokkaa">
             <items>
-              <MenuItem mnemonicParsing="false" text="Lisää kirja" />
-                  <MenuItem mnemonicParsing="false" text="Poista kirja" />
-                  <MenuItem mnemonicParsing="false" text="Muokkaa kirjan tietoja" />
+              <MenuItem mnemonicParsing="false" onAction="#handleLisaaKirja" text="Lisää kirja" />
+                  <MenuItem mnemonicParsing="false" onAction="#handlePoistaKirja" text="Poista kirja" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleMuokkaaKirjaa" text="Muokkaa kirjan tietoja" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Ohje">
             <items>
-              <MenuItem mnemonicParsing="false" text="Ohje" />
+              <MenuItem mnemonicParsing="false" onAction="#handleOhje" text="Ohje" />
             </items>
           </Menu>
         </menus>

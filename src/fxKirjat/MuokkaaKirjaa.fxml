@@ -11,8 +11,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxKirjat.MuokkausController">
    <top>
       <Label text="Muokkaa" BorderPane.alignment="CENTER">
          <padding>
@@ -119,8 +118,8 @@
    <bottom>
       <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <buttons>
-          <Button mnemonicParsing="false" text="Tallenna" />
-            <Button mnemonicParsing="false" text="Peruuta" />
+          <Button mnemonicParsing="false" onAction="#handleTallenna" text="Tallenna" />
+            <Button mnemonicParsing="false" onAction="#handlePeruuta" text="Peruuta" />
         </buttons>
          <BorderPane.margin>
             <Insets right="7.0" />

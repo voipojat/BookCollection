@@ -98,7 +98,7 @@
             </BorderPane>
          </top>
          <bottom>
-            <ListChooser rivit="Suuri lammasseikkailu&#10;Maps of meaning&#10;Crime and punishment&#10;Kafka rannalla&#10;Norwegian Wood&#10;" BorderPane.alignment="CENTER" />
+            <ListChooser fx:id="chooserKirjat" rivit="Suuri lammasseikkailu&#10;Maps of meaning&#10;Crime and punishment&#10;Kafka rannalla&#10;Norwegian Wood&#10;" BorderPane.alignment="CENTER" />
          </bottom>
          <center>
             <Label maxHeight="-Infinity" text="Kirjat" BorderPane.alignment="CENTER">
@@ -112,7 +112,7 @@
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+            <ScrollPane fx:id="panelKirja" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
                <content>
                   <GridPane hgap="10.0">
                     <columnConstraints>

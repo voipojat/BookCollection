@@ -1,6 +1,7 @@
 package kirjasto;
 
 import java.io.*;
+import fi.jyu.mit.ohj2.Mjonot;
 
 /**
  * @author antontuominen
@@ -68,6 +69,20 @@ public class Kirja {
         seuraavaId++;
         return id;
     }
+
+
+    
+    
+    /**
+     * Asettaa id:n ja samalla varmistaa että
+     * seuraava numero on aina suurempi kuin tähän mennessä suurin.
+     * @param nr asetettava id
+     */
+    private void setId(int nr) {
+        id = nr;
+        if (id >= seuraavaId) seuraavaId = id + 1;
+    }
+
     
     /**
      * Palauttaa kirjan id:n.
@@ -112,8 +127,64 @@ public class Kirja {
     public void tulosta(OutputStream os) {
         tulosta(new PrintStream(os));
     }
+    
+    
+    /**
+     * Palauttaa kirjan tiedot merkkijonona jonka voi tallentaa tiedostoon.
+     * @return kirja tolppaeroteltuna merkkijonona 
+     * <pre name="test">
+     *   Kirja kirja = new Kirja();
+     *   kirja.parse("   2  |  4  | Kafka rannalla ");
+     *   kirja.toString().startsWith("2|4|Kafka rannalla|") === true; // on enemmäkin kuin 3 kenttää, siksi loppu |
+     * </pre>  
+     */
+    @Override
+    public String toString() {
+        return "" +
+                getId() + "|" +
+                getKirjailijaId() + "|" +
+                kirjanNimi + "|" +
+                kustantaja + "|" +
+                vuosi + "|" +
+                kieli + "|" +
+                sivumaara + "|" +
+                arvio;
+    }
+    
+    /**
+     * Selvittää kirjan tiedot | - erotellusta merkkijonosta
+     * @param rivi josta kirjan tiedot luetaan
+     * @example
+     * <pre name="test">
+     *   Kirja kirja = new Kirja();
+     *   kirja.parse("   1  |  3   | Suuri lammasseikkailu");
+     *   kirja.getId() === 1;
+     * </pre>
+     */
+    public void parse(String rivi) {
+        StringBuffer sb = new StringBuffer(rivi);
+        setId(Mjonot.erota(sb, '|', getId()));
+        setKirjailijaId(Mjonot.erota(sb, '|', getKirjailijaId()));
+        kirjanNimi = Mjonot.erota(sb, '|', kirjanNimi);
+        kustantaja = Mjonot.erota(sb, '|', kustantaja);
+        vuosi = Mjonot.erota(sb, '|', vuosi);
+        kieli = Mjonot.erota(sb, '|', kieli);
+        sivumaara = Mjonot.erota(sb, '|', sivumaara);
+        arvio = Mjonot.erota(sb, '|', arvio);
+    }
+    
+    @Override
+    public boolean equals(Object kirja) {
+        if ( kirja == null ) return false;
+        return this.toString().equals(kirja.toString());
+    }
 
-  
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
     /**
      * Testiohjelma kirjalle
      * @param args ei käytössä
@@ -121,7 +192,7 @@ public class Kirja {
     public static void main(String [] args) {
         Kirja kirja1 = new Kirja();
         kirja1.vastaaKafkaRannalla();
-        kirja1.rekisteroi();
+     
         kirja1.tulosta(System.out);
     }
 

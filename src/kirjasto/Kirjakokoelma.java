@@ -1,5 +1,8 @@
 package kirjasto;
 
+import java.io.File;
+import java.util.Collection;
+
 /**
  * @author antontuominen
  * @version 12 Mar 2020
@@ -7,8 +10,8 @@ package kirjasto;
  */
 public class Kirjakokoelma {
     
-    private final Kirjat kirjat = new Kirjat();
-    private final Kirjailijat kirjailijat = new Kirjailijat();
+    private Kirjat kirjat = new Kirjat();
+    private Kirjailijat kirjailijat = new Kirjailijat();
    
     /**
      * palauttaa kirjakokoelman kirjojen määrän
@@ -55,7 +58,7 @@ public class Kirjakokoelma {
      *    kirjakokoelma.lisaa(kirja1);
      *    kirjakokoelma.lisaa(kirja1);
      *    kirjakokoelma.lisaa(kirja1);
-     *    kirjakokoelma.lisaa(kirja1);  #THROWS SailoException
+     *    kirjakokoelma.lisaa(kirja1);  
      * </pre>
      */
     public void lisaa(Kirja kirja) throws SailoException{
@@ -70,6 +73,18 @@ public class Kirjakokoelma {
         kirjailijat.lisaa(kirjailija);
     }
     
+    
+    /** 
+     * Palauttaa "taulukossa" hakuehtoon vastaavien kirjojen viitteet 
+     * @param hakuehto hakuehto  
+     * @param k etsittävän kentän indeksi  
+     * @return tietorakenteen löytyneistä kirjoista
+     * @throws SailoException Jos jotakin menee väärin
+     */ 
+    public Collection<Kirja> etsi(String hakuehto, int k) throws SailoException { 
+        return kirjat.etsi(hakuehto, k); 
+    } 
+
     
     /**
      * Palauttaa i:n kirjan
@@ -89,6 +104,98 @@ public class Kirjakokoelma {
     public Kirjailija annaKirjailija(int kirjailijaId) {
         return kirjailijat.annaKirjailija(kirjailijaId);
     }
+    
+    
+    /**
+     * Asettaa tiedostojen perusnimet
+     * @param nimi uusi nimi
+     */
+    public void setTiedosto(String nimi) {
+        File dir = new File(nimi);
+        dir.mkdirs();
+        String hakemistonNimi = "";
+        if ( !nimi.isEmpty() ) hakemistonNimi = nimi +"/";
+        kirjat.setTiedostonPerusNimi(hakemistonNimi + "kirjat");
+        kirjailijat.setTiedostonPerusNimi(hakemistonNimi + "kirjailijat");
+    }
+    
+    /**
+     * Lukee kirjakokoelman tiedot tiedostosta
+     * @param nimi jota käytetään lukemiseen
+     * @throws SailoException jos lukeminen epäonnistuu
+     * @example
+     * <pre name="test">
+     * #THROWS SailoException 
+     * #import java.io.*;
+     * #import java.util.*;
+     * 
+     *  Kirjakokoelma kirjakokoelma = new Kirjakokoelma();
+     *  
+     *  Kirja kafka = new Kirja(); kafka.vastaaKafkaRannalla(); kafka.rekisteroi();
+     *  Kirja kafka1 = new Kirja(); kafka1.vastaaKafkaRannalla(); kafka1.rekisteroi();
+     *  
+     *  Kirjailija haru = new Kirjailija(); haru.vastaaHarukiMurakami(kafka.getId());
+     *  Kirjailija haru1 = new Kirjailija(); haru1.vastaaHarukiMurakami(kafka1.getId());
+     *  
+     *  
+     *  String hakemisto = "testikirjat";
+     *  File dir = new File(hakemisto);
+     *  File ftied  = new File(hakemisto+"/kirjat.dat");
+     *  File fhtied = new File(hakemisto+"/kirjailijat.dat");
+     *  dir.mkdir();  
+     *  ftied.delete();
+     *  fhtied.delete();
+     *  kirjakokoelma.lueTiedostosta(hakemisto); #THROWS SailoException
+     *  
+     *  kirjakokoelma.lisaa(kafka);
+     *  kirjakokoelma.lisaa(kafka1);
+     *  kirjakokoelma.lisaa(haru);
+     *  kirjakokoelma.lisaa(haru1);
+     *  
+     *  kirjakokoelma.tallenna();
+     *  kirjakokoelma = new Kirjakokoelma();
+     *  kirjakokoelma.lueTiedostosta(hakemisto);
+     *  Collection<Kirja> kaikki = kirjakokoelma.etsi("",-1); 
+     *  Iterator<Kirja> it = kaikki.iterator();
+     *  it.next() === kafka;
+     *  it.next() === kafka1;
+     *  it.hasNext() === false;
+     * </pre>
+     */
+    public void lueTiedostosta(String nimi) throws SailoException {
+        kirjat = new Kirjat(); // jos luetaan olemassa olevaan niin helpoin tyhjentää näin
+        kirjailijat = new Kirjailijat();
+
+        setTiedosto(nimi);
+        kirjat.lueTiedostosta();
+        kirjailijat.lueTiedostosta();
+    }
+    
+    
+    /**
+     * Tallentaa kirjakokoelman tiedot tiedostoon.  
+     * Vaikka kirjojen tallentaminen epäonistuisi, niin yritetään silti tallentaa
+     * kirjailijoita ennen poikkeuksen heittämistä.
+     * @throws SailoException jos tallettamisessa ongelmia
+     */
+    public void tallenna() throws SailoException {
+        String virhe = "";
+        try {
+            kirjat.tallenna();
+        } catch ( SailoException ex ) {
+            virhe = ex.getMessage();
+        }
+
+        try {
+            kirjailijat.tallenna();
+        } catch ( SailoException ex ) {
+            virhe += ex.getMessage();
+        }
+        if ( !"".equals(virhe) ) throw new SailoException(virhe);
+    }
+
+
+
 
     /**
      * Testiohjelma kirjakokoelmalle

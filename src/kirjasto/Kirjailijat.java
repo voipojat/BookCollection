@@ -1,6 +1,18 @@
 package kirjasto;
 
-import java.util.*;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+
 
 /**
  * @author antontuominen
@@ -9,10 +21,14 @@ import java.util.*;
  */
 public class Kirjailijat implements Iterable<Kirjailija>{
     
+    private boolean muutettu = false;
+    private String tiedostonPerusNimi = "";
+    
     
     
     /**Taulukko kirjailijoista*/
     private final Collection<Kirjailija> kirjailijat = new ArrayList<Kirjailija>();
+    
     
     /**
      * Oletusmuodostaja
@@ -34,8 +50,130 @@ public class Kirjailijat implements Iterable<Kirjailija>{
      * @param kirjailija lisättävä kirjailija
      */
     public void lisaa(Kirjailija kirjailija) {
-        kirjailijat.add(kirjailija);      
+        kirjailijat.add(kirjailija);  
+        muutettu = true;
     }
+    
+    
+    /**
+     * Lukee kirjailijat tiedostosta
+     * @param tied tiedoston nimen alkuosa
+     * @throws SailoException jos lukeminen epäonnistuu
+     * @example
+     * <pre name="test">
+     * #THROWS SailoException 
+     * #import java.io.File;
+     * 
+     *   Kirjailijat kirjailijat = new Kirjailijat();
+     *   Kirjailija haru1 = new Kirjailija(); haru1.vastaaHarukiMurakami(1);
+     *   Kirjailija haru2 = new Kirjailija(); haru2.vastaaHarukiMurakami(1);
+     *   String tiedNimi = "testikirjat";
+     *   File ftied = new File(tiedNimi+".dat");
+     *   ftied.delete();
+     *   kirjailijat.lueTiedostosta(tiedNimi); #THROWS SailoException
+     *   kirjailijat.lisaa(haru1);
+     *   kirjailijat.lisaa(haru2);
+     *   kirjailijat.tallenna();
+     *   kirjailijat = new Kirjailijat();
+     *   kirjailijat.lueTiedostosta(tiedNimi);
+     *   Iterator<Kirjailija> i = kirjailijat.iterator();
+     *   i.next().toString() === haru1.toString();
+     *   i.next().toString() === haru2.toString();
+     *   i.hasNext() === false;
+     * </pre>
+     */
+    public void lueTiedostosta(String tied) throws SailoException {
+        setTiedostonPerusNimi(tied);
+        try ( BufferedReader fi = new BufferedReader(new FileReader(getTiedostonNimi())) ) {
+
+            String rivi;
+            while ( (rivi = fi.readLine()) != null ) {
+                rivi = rivi.trim();
+                if ( "".equals(rivi) || rivi.charAt(0) == ';' ) continue;
+                Kirjailija kir = new Kirjailija();
+                kir.parse(rivi); 
+                lisaa(kir);
+            }
+            muutettu = false;
+
+        } catch ( FileNotFoundException e ) {
+            throw new SailoException("Tiedosto " + getTiedostonNimi() + " ei aukea");
+        } catch ( IOException e ) {
+            throw new SailoException("Ongelmia tiedoston kanssa: " + e.getMessage());
+        }
+    }
+    
+    
+    /**
+     * Luetaan aikaisemmin annetun nimisestä tiedostosta
+     * @throws SailoException jos tulee poikkeus
+     */
+    public void lueTiedostosta() throws SailoException {
+        lueTiedostosta(getTiedostonPerusNimi());
+    }
+    
+    
+    /**
+     * Tallentaa kirjailijat tiedostoon
+     * @throws SailoException jos talletus epäonnistuu
+     */
+    public void tallenna() throws SailoException {
+        if ( !muutettu ) return;
+
+        File fbak = new File(getBakNimi());
+        File ftied = new File(getTiedostonNimi());
+        fbak.delete(); //  if ... System.err.println("Ei voi tuhota");
+        ftied.renameTo(fbak); //  if ... System.err.println("Ei voi nimetä");
+
+        try ( PrintWriter fo = new PrintWriter(new FileWriter(ftied.getCanonicalPath())) ) {
+            for (Kirjailija kir : this) {
+                fo.println(kir.toString());
+            }
+        } catch ( FileNotFoundException ex ) {
+            throw new SailoException("Tiedosto " + ftied.getName() + " ei aukea");
+        } catch ( IOException ex ) {
+            throw new SailoException("Tiedoston " + ftied.getName() + " kirjoittamisessa ongelmia");
+        }
+
+        muutettu = false;
+    }
+
+
+    /**
+     * Asettaa tiedoston perusnimen ilman tarkenninta
+     * @param tied tallennustiedoston perusnimi
+     */
+    public void setTiedostonPerusNimi(String tied) {
+        tiedostonPerusNimi = tied;
+    }
+
+
+    /**
+     * Palauttaa tiedoston nimen, jota käytetään tallennukseen
+     * @return tallennustiedoston nimi
+     */
+    public String getTiedostonPerusNimi() {
+        return tiedostonPerusNimi;
+    }
+
+
+    /**
+     * Palauttaa tiedoston nimen, jota käytetään tallennukseen
+     * @return tallennustiedoston nimi
+     */
+    public String getTiedostonNimi() {
+        return tiedostonPerusNimi + ".dat";
+    }
+
+
+    /**
+     * Palauttaa varakopiotiedoston nimen
+     * @return varakopiotiedoston nimi
+     */
+    public String getBakNimi() {
+        return tiedostonPerusNimi + ".bak";
+    }
+
     
     /**
      * Iteraattori kaikkien kirjailijoiden läpikäymiseen

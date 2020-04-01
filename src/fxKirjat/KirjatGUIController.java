@@ -1,15 +1,11 @@
 package fxKirjat;
 
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import java.io.PrintStream;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List; 
 import java.util.ResourceBundle;
 
 import fi.jyu.mit.fxgui.ComboBoxChooser;
@@ -17,10 +13,8 @@ import fi.jyu.mit.fxgui.Dialogs;
 import fi.jyu.mit.fxgui.ListChooser;
 import fi.jyu.mit.fxgui.ModalController;
 import fi.jyu.mit.fxgui.TextAreaOutputStream;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
@@ -28,7 +22,8 @@ import kirjasto.Kirjakokoelma;
 import kirjasto.SailoException;
 import kirjasto.Kirja;
 import kirjasto.Kirjailija;
-import kirjasto.Kirjailijat;
+import java.util.Collection;
+
 
 /**
  * @author antontuominen
@@ -38,16 +33,22 @@ import kirjasto.Kirjailijat;
  */
 public class KirjatGUIController implements Initializable{
     
-    
+    @FXML private TextField hakuehto;
+    @FXML private ComboBoxChooser<String> cbKentat;
     @FXML private ScrollPane panelKirja;
     @FXML private ListChooser<Kirja> chooserKirjat;
+    @FXML private Label labelVirhe;
     
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
         alusta();      
     }
+    
+    @FXML private void handleHakuehto() {
+        if ( kirjaKohdalla != null )
+            hae(kirjaKohdalla.getId()); 
+    }
 
-	//
     @FXML private void handlePoistaKirja() {
         Dialogs.showMessageDialog("Vielä ei osata poistaa kirjaa!");
     }
@@ -65,20 +66,22 @@ public class KirjatGUIController implements Initializable{
     }
     
     @FXML private void handleTallenna() {
-        Dialogs.showMessageDialog("Ei osata vielä tallentaa!");
+        tallenna();
     }
     
     @FXML private void handlePeruuta() {
         Dialogs.showMessageDialog("Ei osata vielä peruuttaa!");
     }
     @FXML private void handleAvaa() {
-        Dialogs.showMessageDialog("Ei osata vielä avata uutta kokoelmaa!");
+        avaa();
     }
     
     
     //===========================================================================
     
-    private Kirjakokoelma kirjakokoelma = new Kirjakokoelma();
+    private String kirjakokoelmanNimi = "Matin_kirjat";
+    
+    private Kirjakokoelma kirjakokoelma;
 
     private Kirja kirjaKohdalla;
     
@@ -97,8 +100,80 @@ public class KirjatGUIController implements Initializable{
         chooserKirjat.clear();
         chooserKirjat.addSelectionListener(e -> naytaKirja());
     }
+    private void setTitle(String title) {
+        ModalController.getStage(hakuehto).setTitle(title);
+    }
     
     
+    private void naytaVirhe(String virhe) {
+        if ( virhe == null || virhe.isEmpty() ) {
+            labelVirhe.setText("");
+            labelVirhe.getStyleClass().removeAll("virhe");
+            return;
+        }
+        labelVirhe.setText(virhe);
+        labelVirhe.getStyleClass().add("virhe");
+    }
+
+
+    
+    
+    /**
+     * Alustaa kirjakokoelman lukemalla sen valitun nimisestä tiedostosta
+     * @param nimi tiedosto josta kirjakokoelman tiedot luetaan
+     * @return null jos onnistuu, muuten virhe tekstinä
+     */
+    protected String lueTiedosto(String nimi) {
+        kirjakokoelmanNimi = nimi;
+        setTitle("Kirjakokoelma - " + kirjakokoelmanNimi);
+        try {
+            kirjakokoelma.lueTiedostosta(nimi);
+            hae(0);
+            return null;
+        } catch (SailoException e) {
+            hae(0);
+            String virhe = e.getMessage(); 
+            if ( virhe != null ) Dialogs.showMessageDialog(virhe);
+            return virhe;
+        }
+     }
+    
+    
+    /**
+     * Kysytään tiedoston nimi ja luetaan se
+     * @return true jos onnistui, false jos ei
+     */
+    public boolean avaa() {
+        String uusinimi = KirjakokoelmanNimiController.kysyNimi(null, kirjakokoelmanNimi);
+        if (uusinimi == null) return false;
+        lueTiedosto(uusinimi);
+        return true;
+    }
+
+    /**
+     * Tietojen tallennus
+     * @return null jos onnistuu, muuten virhe tekstinä
+     */
+    private String tallenna() {
+        try {
+            kirjakokoelma.tallenna();
+            return null;
+        } catch (SailoException ex) {
+            Dialogs.showMessageDialog("Tallennuksessa ongelmia! " + ex.getMessage());
+            return ex.getMessage();
+        }
+    }
+    
+    
+    /**
+     * Tarkistetaan onko tallennus tehty
+     * @return true jos saa sulkea sovelluksen, false jos ei
+     */
+    public boolean voikoSulkea() {
+        tallenna();
+        return true;
+    }
+
     /**
      * Näyttää listasta valitun kirjan tiedot, tilapäisesti yhteen isoon edit-kenttään
      */
@@ -137,7 +212,8 @@ public class KirjatGUIController implements Initializable{
      * Lisätään kirjailija kirjalle ja lisätään se kirjailijoihin, jos kyseistä
      * kirjailijaa ei ole vielä kirjailijataulukossa
      * TODO tarkistetaan ANNETUSTA kirjailijan nimestä onko se jo 
-     * lisätty kirjailijoihin, nyt käytössä vain tuo Murakami
+     * lisätty kirjailijoihin, nyt käytössä vain tuo Murakami,
+     * koska kaikki lisättävät kirjat toistaiseksi samoja
      * @param kirja jolle kirjailija lisätään
      */
     protected void lisaaKirjailija(Kirja kirja) {
@@ -159,18 +235,43 @@ public class KirjatGUIController implements Initializable{
      * @param kirjaId kirjan id, joka aktivoidaan haun jälkeen
      */
     protected void hae(int kirjaId) {
+        int k = cbKentat.getSelectionModel().getSelectedIndex();
+        String ehto = hakuehto.getText(); 
+        if (k > 0 || ehto.length() > 0)
+            naytaVirhe(String.format("Ei osata hakea (kenttä: %d, ehto: %s)", k, ehto));
+        else
+            naytaVirhe(null);
+        
         chooserKirjat.clear();
 
         int index = 0;
-        for (int i = 0; i < kirjakokoelma.getKirjat(); i++) {
-            Kirja kirja = kirjakokoelma.annaKirja(i);
-            if (kirja.getId() == kirjaId) index = i;
-            chooserKirjat.add(kirja.getKirjanNimi(), kirja);
+        Collection<Kirja> kirjat;
+        try {
+            //tässä vaiheessa hakee vielä kaikki kirjat
+            kirjat = kirjakokoelma.etsi(ehto, k);
+            int i = 0;
+            for (Kirja kirja:kirjat) {
+                if (kirja.getId() == kirjaId) index = i;
+                chooserKirjat.add(kirja.getKirjanNimi(), kirja);
+                i++;
+            }
+        } catch (SailoException ex) {
+            Dialogs.showMessageDialog("Jäsenen hakemisessa ongelmia! " + ex.getMessage());
         }
-        chooserKirjat.setSelectedIndex(index); 
+        chooserKirjat.setSelectedIndex(index); // tästä tulee muutosviesti joka näyttää jäsenen
+
     }
 
-    
+
+    /**
+     * @param kirjakokoelma jota käytetään tässä käyttöliittymässä
+     */
+    public void setKirjakokoelma(Kirjakokoelma kirjakokoelma) {
+        this.kirjakokoelma = kirjakokoelma;
+        naytaKirja();
+    }
+
+
     /**
      * Tulostaa kirjan tiedot
      * @param os tietovirta johon tulostetaan
@@ -191,13 +292,14 @@ public class KirjatGUIController implements Initializable{
      */
     public void tulostaValitut(TextArea text) {
         try (PrintStream os = TextAreaOutputStream.getTextPrintStream(text)) {
-            os.println("Tulostetaan kaikki kirjat");
-            for (int i = 0; i < kirjakokoelma.getKirjat(); i++) {
-                Kirja kirja = kirjakokoelma.annaKirja(i);
+            os.println("Tulostetaan kaikki jäsenet");
+            Collection<Kirja> kirjat = kirjakokoelma.etsi("", -1); 
+            for (Kirja kirja:kirjat) { 
                 tulosta(os, kirja);
                 os.println("\n\n");
             }
+        } catch (SailoException ex) { 
+            Dialogs.showMessageDialog("Jäsenen hakemisessa ongelmia! " + ex.getMessage()); 
         }
     }
-
 }

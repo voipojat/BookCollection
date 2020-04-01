@@ -1,5 +1,6 @@
 package kirjasto;
 import java.io.*;
+import fi.jyu.mit.ohj2.Mjonot;
 /**
  * @author antontuominen
  * @version 11 Mar 2020
@@ -74,6 +75,56 @@ public class Kirjailija {
     public String getKirjailijanNimi() {
         return kirjailijanNimi;
     }
+    
+    /**
+     * Asettaa tunnusnumeron ja samalla varmistaa että
+     * seuraava numero on aina suurempi kuin tähän mennessä suurin.
+     * @param nr asetettava tunnusnumero
+     */
+    private void setId(int nr) {
+        id = nr;
+    }
+
+    /**
+     * Palauttaa kirjailijan tiedot merkkijonona, jonka voi tallentaa tiedostoon
+     * @return kirjailija tolppaeroteltuna merkkijonona
+     */
+    @Override
+    public String toString() {
+        return "" + getKirjailijaId() + "|" + kirjailijanNimi;
+    }
+
+    
+    /**
+     * Selvittää kirjailijan tiedot | -erotellusta merkkijonosta
+     * @param rivi josta kirjailijan tiedot otetaan
+     * @example
+     * <pre name="test">
+     *   Kirjailija kirjailija = new Kirjailija();
+     *   kirjailija.parse("   2   |  Haruki Murakami");
+     *   kirjailija.getKirjailijaId() === 2;
+     *   kirjailija.toString()    === "2|Haruki Murakami"; 
+     * </pre>
+     */
+    public void parse(String rivi) {
+        StringBuffer sb = new StringBuffer(rivi);
+        setId(Mjonot.erota(sb, '|', getKirjailijaId()));
+        kirjailijanNimi = Mjonot.erota(sb, '|', kirjailijanNimi);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if ( obj == null ) return false;
+        return this.toString().equals(obj.toString());
+    }
+    
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+
 
     /**
      * Testiohjelma Kirjailijalle

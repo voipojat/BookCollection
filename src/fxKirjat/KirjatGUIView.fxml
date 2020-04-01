@@ -9,6 +9,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitMenuButton?>
+<?import fi.jyu.mit.fxgui.ComboBoxChooser?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -16,6 +17,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxKirjat.KirjatGUIController">
    <bottom>
@@ -71,29 +73,20 @@
          <top>
             <BorderPane BorderPane.alignment="CENTER">
                <top>
-                  <Label text="Haku" BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </BorderPane.margin>
-                  </Label>
+                  
                </top>
                <center>
-                  <TextField BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" />
-                     </BorderPane.margin>
-                  </TextField>
+               <VBox BorderPane.alignment="CENTER">
+               <children>
+                <Label alignment="CENTER" maxWidth="300.0" text="Haku" />
+               <ComboBoxChooser fx:id="cbKentat" maxWidth="200.0" onAction="#handleHakuehto" rivit="Kirjan nimi&#10; Kirjailijan nimi&#10;"  />
+                 <TextField fx:id="hakuehto" onKeyReleased="#handleHakuehto" />
+                 
+                 </children>
+                     </VBox>
+                     
                </center>
                <bottom>
-                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Kirjan nimi" BorderPane.alignment="CENTER">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Kirjan nimi" />
-                      <MenuItem mnemonicParsing="false" text="Kirjailija" />
-                    </items>
-                     <BorderPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" />
-                     </BorderPane.margin>
-                  </SplitMenuButton>
                </bottom>
             </BorderPane>
          </top>
@@ -158,6 +151,9 @@
                </BorderPane.margin>
             </Label>
          </top>
+         <bottom>
+          <Label fx:id="labelVirhe" alignment="CENTER" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER" />
+         </bottom>
       </BorderPane>
    </center>
    <right>

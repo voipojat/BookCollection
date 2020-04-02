@@ -258,7 +258,7 @@ public class KirjatGUIController implements Initializable{
         } catch (SailoException ex) {
             Dialogs.showMessageDialog("Jäsenen hakemisessa ongelmia! " + ex.getMessage());
         }
-        chooserKirjat.setSelectedIndex(index); // tästä tulee muutosviesti joka näyttää jäsenen
+        chooserKirjat.setSelectedIndex(index); // tästä tulee muutosviesti joka näyttää kirjan
 
     }
 

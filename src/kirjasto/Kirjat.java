@@ -11,10 +11,17 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
+import fi.jyu.mit.ohj2.WildChars;
+
 /**
+ * Kirjakokoelman kirjat, osaa mm. lisätä uuden kirjan
+ * 
  * @author antontuominen
  * @version 11 Mar 2020
  * @version 29 Mar 2020 - tiedostot hakemistossa
@@ -34,9 +41,21 @@ public class Kirjat implements Iterable<Kirja>{
     public Kirjat() {
         //
     }
+    
+    /**
+     * Lähinnä kloonaus varten
+     * @param kokoNimi tiedoston koko nimi
+     * @param tiedPerusnimi tiedoston perusnimi
+     */
+    public Kirjat(String kokoNimi, String tiedPerusnimi) {
+        this.kokoNimi = kokoNimi;
+        this.tiedostonPerusNimi = tiedPerusnimi;
+
+    }
 
     /**
      * @param kirja lisättävä kirja
+     * @param kloonaus onko kloonaus käynnissä
      * @throws SailoException jos tietorakenne täynnä
      * @example
      * <pre name="test">
@@ -55,13 +74,28 @@ public class Kirjat implements Iterable<Kirja>{
      *   kirjat.lisaa(kirja1); 
      * </pre>
      */
-    public void lisaa(Kirja kirja) throws SailoException {
+    public void lisaa(Kirja kirja, boolean kloonaus) throws SailoException {
         if (lkm >= alkiot.length) alkiot = Arrays.copyOf(alkiot, lkm+20);
         alkiot[lkm] = kirja;
         lkm++;
-        muutettu = true;
+        
+        if(!kloonaus)
+            muutettu = true;
     }
-    
+    /**
+     * Lisää uuden kirjan tietorakenteeseen 
+     * @param kirja lisättävän kirjan viite
+     * </pre>
+     */
+    public void lisaa(Kirja kirja) {
+        try {
+            lisaa(kirja, false);
+        } catch (SailoException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     /**
      * @return palauttaa kirjaston kirjojen lukumäärän
      */
@@ -86,6 +120,61 @@ public class Kirjat implements Iterable<Kirja>{
     public void setTiedostonPerusNimi(String nimi) {
         tiedostonPerusNimi = nimi;
     }
+    
+   
+   /**
+    * Poistaa kirjan sen id:n mukaan
+    * @param id poistettavan kirjan id
+    * @return 1 jos kirja löytyi, 0 jos ei
+    */
+    public int poista(int id) { 
+        int ind = etsiId(id); 
+        if (ind < 0) return 0; 
+        lkm--; 
+        for (int i = ind; i < lkm; i++) 
+            alkiot[i] = alkiot[i + 1]; 
+        alkiot[lkm] = null; 
+        muutettu = true; 
+        return 1; 
+    } 
+
+    
+    
+    /**
+     * Korvaa kirjan tietorakenteessa. Ottaa kirjan omistukseensa.
+     * Etsitään samalla tunnusnumerolla oleva kirja. Jos ei löydy,
+     * niin lisätään uutena kirjana.
+     * @param kirja lisättävän kirjan viite, tietorakenne muuttuu omistajaksi
+     * #THROWS SailoException,CloneNotSupportedException
+     * #PACKAGEIMPORT
+     * Kirjat kirjat = new Kirjat();
+     * Kirja kir1 = new Kirja(), kir2 = new Kirja();
+     * kir1.rekisteroi(); kir2.rekisteroi();
+     * kirjat.getLkm() === 0;
+     * kirjat.korvaaTaiLisaa(kir1); kirjat.getLkm() === 1;
+     * kirjat.korvaaTaiLisaa(kir2); kirjat.getLkm() === 2;
+     * Kirja kir3 = kir1.clone();
+     * Iterator<Kirja> it = kirjat.iterator();
+     * it.next() == kir1 === true;
+     * kirjat.korvaaTaiLisaa(kir3); kirjat.getLkm() === 2;
+     * it = kirjat.iterator();
+     * Kirja kir0 = it.next();
+     * kir0 === kir3;
+     * j0 == kir3 === true;
+     * j0 == kir1 === false;
+     */
+    public void korvaaTaiLisaa(Kirja kirja) {
+        int id = kirja.getId();
+        for (int i = 0; i < getLkm(); i++) {
+            if (alkiot[i].getId() == id) {
+                alkiot[i] = kirja;
+                muutettu = true;
+                return;
+            }
+        }
+        lisaa(kirja);
+    }
+
 
 
     /**
@@ -281,7 +370,7 @@ public class Kirjat implements Iterable<Kirja>{
          */
         @Override
         public Kirja next() throws NoSuchElementException {
-            if ( !hasNext() ) throw new NoSuchElementException("Ei oo");
+            if ( !hasNext() ) throw new NoSuchElementException("Kirjat loppu");
             return anna(kohdalla++);
         }
 
@@ -308,20 +397,74 @@ public class Kirjat implements Iterable<Kirja>{
     }
 
     /**
-     * Palauttaa taulukossa hakuehtoon vastaavien kirjojen viitteet,
-     * tässä vaiheessa palauttaa kaikki
-     * TODO ehdon mukaan hakeminen ja testit
+     * Palauttaa taulukossa hakuehtoon vastaavien kirjojen viitteet
      * @param hakuehto hakuehto
      * @param k etsittävän kentän indeksi
      * @return tietorakenteen löytyneistä kirjoista
      */
-    @SuppressWarnings("unused")
-    public Collection<Kirja> etsi(String hakuehto, int k) { 
-        Collection<Kirja> loytyneet = new ArrayList<Kirja>(); 
+    public Collection<Kirja> etsi(String hakuehto, int k) {
+        //aakkosjärjestys jos tyhjä hakuehto
+        if(hakuehto.length() == 2 || hakuehto == "") {
+            List<Kirja> loytyneet = new ArrayList<Kirja>();
+            for(Kirja kirja: this) {
+                loytyneet.add(kirja);
+            }
+            Collections.sort(loytyneet, new Comparator<Kirja>() {
+                @Override
+                public int compare(Kirja c1, Kirja c2) {
+                    return c1.getKirjanNimi().compareTo(c2.getKirjanNimi());
+                }
+            });
+            return loytyneet;
+        }
+        String ehto = "*"; 
+        ehto = hakuehto; 
+        int hk = k; 
+        if ( hk < 0 ) hk = 0; // jotta etsii id:n mukaan 
+        List<Kirja> loytyneet = new ArrayList<Kirja>(); 
         for (Kirja kirja : this) { 
-            loytyneet.add(kirja);  
+            if (WildChars.onkoSamat(kirja.anna(hk), ehto)) loytyneet.add(kirja);   
         } 
         return loytyneet; 
+    }
+    
+    
+    /**
+     * Etsii kirjan sen id:n perusteella
+     * @param id jolla etsitään
+     * @return löytyneen kirjan indeksi tai -1 jos ei löydy
+     *   #THROWS SailoException  
+     *   Kirjat kirjat = new Kirjat(); 
+     *   Kirja k1 = new Kirja(), k2 = new Kirja(), k3 = new Kirja(); 
+     *   k1.rekisteroi(); k2.rekisteroi(); k3.rekisteroi(); 
+     *   int id1 = k1.getId(); 
+     *   kirjat.lisaa(k1); kirjat.lisaa(k2); kirjat.lisaa(k3); 
+     *   kirjat.etsiId(id1+1) === 1; 
+     *   kirjat.etsiId(id1+2) === 2; 
+     */
+    public int etsiId(int id) { 
+        for (int i = 0; i < lkm; i++) 
+            if (id == alkiot[i].getId()) return i; 
+        return -1; 
+    } 
+    
+    /**
+     * Kloonaa tietorakenteen muttei sen alkioita,
+     * jotta voidaan poistaa ja lisätä uusia muokkausdialogissa.
+     */
+    @Override
+    public Kirjat clone() {
+        Kirjat klooni = new Kirjat(kokoNimi, tiedostonPerusNimi);
+        for (int i = 0; i < lkm; i++) {
+            Kirja kirja = alkiot[i];
+            try {
+                klooni.lisaa(kirja, true);
+            } catch (SailoException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return klooni;
     }
 
     /**
@@ -337,22 +480,15 @@ public class Kirjat implements Iterable<Kirja>{
         kafka2.rekisteroi();
         kafka2.vastaaKafkaRannalla();
         
-        try {
-            kirjat.lisaa(kafka);
-            kirjat.lisaa(kafka2);
+        kirjat.lisaa(kafka);
+        kirjat.lisaa(kafka2);
 
-            System.out.println("============= Kirjat testi =================");
+        System.out.println("============= Kirjat testi =================");
 
-            for (int i = 0; i < kirjat.getLkm(); i++) {
-                Kirja kirja = kirjat.anna(i);
-                System.out.println("Kirja nro: " + i);
-                kirja.tulosta(System.out);
-            }
-
-        } catch (SailoException ex) {
-            System.out.println(ex.getMessage());
+        for (int i = 0; i < kirjat.getLkm(); i++) {
+            Kirja kirja = kirjat.anna(i);
+            System.out.println("Kirja nro: " + i);
+            kirja.tulosta(System.out);
         }
-
     }
-
 }

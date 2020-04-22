@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import fi.jyu.mit.fxgui.ComboBoxChooser?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
@@ -9,22 +10,23 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxKirjat.MuokkausController">
    <top>
-      <Label text="Muokkaa" BorderPane.alignment="CENTER">
+      <Label fx:id="labelVirhe" text="Muokkaa" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
          </padding>
       </Label>
    </top>
    <center>
-      <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="panelKirja" fitToWidth="true" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <content>
-            <GridPane alignment="TOP_CENTER" hgap="10.0">
+            <GridPane fx:id="gridKirja" alignment="TOP_CENTER" hgap="10.0">
               <columnConstraints>
-                <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="5.0" prefWidth="40.0" />
                 <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
@@ -45,27 +47,29 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <Label text="Kirjailija" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets right="10.0" />
-                     </GridPane.margin>
-                  </Label>
                   <Label text="Kustantaja" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField alignment="TOP_LEFT" text="Crime and punishment" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
+                  <TextField fx:id="editNimi" alignment="TOP_LEFT" text="Crime and punishment" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="Fyodor Dostoyevsky" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets />
-                     </GridPane.margin>
-                  </TextField>
-                  <TextField text="Dover" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+                  <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+					<children>
+                  <HBox prefWidth="400.0" />
+            						<Button alignment="TOP_LEFT" graphicTextGap="1.0" minWidth="144.0" mnemonicParsing="false" onAction="#handleLisaaKirjailija" text="Lisää kirjailija" textAlignment="JUSTIFY">
+							<HBox.margin>
+								<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+							</HBox.margin>
+            						</Button>
+						
+					</children>
+				</HBox>
+                  
+                  <TextField fx:id="editKustantaja" text="Dover" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
@@ -90,26 +94,27 @@
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField text="2001" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <TextField fx:id="editVuosi" text="2001" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="448" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <TextField fx:id="editSivumaara" text="448" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="englanti" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <TextField fx:id="editKieli" text="englanti" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
-                  <TextField text="5" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                  <TextField fx:id="editArvio" text="5" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </TextField>
+						<ComboBoxChooser fx:id="editKirjailija" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="100.0" rivit="" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </content>

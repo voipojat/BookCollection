@@ -15,6 +15,8 @@ import java.util.Iterator;
 
 
 /**
+ * Kirjakokoelman kirjailijat, osaa mm. lisätä uuden kirjailijan
+ * 
  * @author antontuominen
  * @version 11 Mar 2020
  *
@@ -23,12 +25,9 @@ public class Kirjailijat implements Iterable<Kirjailija>{
     
     private boolean muutettu = false;
     private String tiedostonPerusNimi = "";
-    
-    
-    
+
     /**Taulukko kirjailijoista*/
     private final Collection<Kirjailija> kirjailijat = new ArrayList<Kirjailija>();
-    
     
     /**
      * Oletusmuodostaja
@@ -38,6 +37,16 @@ public class Kirjailijat implements Iterable<Kirjailija>{
     }
     
     /**
+     * Kirjailijoiden alustaminen (kloonaus)
+     * @param muutettu onko muutettu vai ei
+     * @param tiedostonPerusNimi tiedoston perusnimi
+     */
+    public Kirjailijat(boolean muutettu, String tiedostonPerusNimi) {
+        this.muutettu = muutettu;
+        this.tiedostonPerusNimi = tiedostonPerusNimi;
+    }
+
+    /**
      * Palauttaa kirjaston kirjailijoiden lukumäärän
      * @return kirjailijoiden lukumäärä
      */
@@ -46,15 +55,26 @@ public class Kirjailijat implements Iterable<Kirjailija>{
     }
 
     /**
-     * Lisää uuden kirjailijan tietorakenteeseen
      * @param kirjailija lisättävä kirjailija
+     * @param kloonaus lisätäänkö kloonatessa vai ei
+     * @return lisätyn kirjailijan id
      */
-    public void lisaa(Kirjailija kirjailija) {
-        kirjailijat.add(kirjailija);  
-        muutettu = true;
+    public int lisaa(Kirjailija kirjailija, boolean kloonaus) {
+        kirjailijat.add(kirjailija);
+        muutettu = !kloonaus;
+        return kirjailija.getKirjailijaId();
     }
-    
-    
+
+
+    /**
+     * Lisää uuden kirjailijan tietorakenteeseen. Ottaa kirjailijan omistukseensa.
+     * @param kirjailija lisättävä kirjailija. Huom tietorakenne muuttuu omistajaksi
+     * @return lisätyn kirjailijan id
+     */
+    public int lisaa(Kirjailija kirjailija) {
+        return lisaa(kirjailija, false);
+    }
+
     /**
      * Lukee kirjailijat tiedostosta
      * @param tied tiedoston nimen alkuosa
@@ -65,9 +85,9 @@ public class Kirjailijat implements Iterable<Kirjailija>{
      * #import java.io.File;
      * 
      *   Kirjailijat kirjailijat = new Kirjailijat();
-     *   Kirjailija haru1 = new Kirjailija(); haru1.vastaaHarukiMurakami(1);
-     *   Kirjailija haru2 = new Kirjailija(); haru2.vastaaHarukiMurakami(1);
-     *   String tiedNimi = "testikirjat";
+     *   Kirjailija haru1 = new Kirjailija(); haru1.vastaaHarukiMurakami(1, "Haruki Murakami");
+     *   Kirjailija haru2 = new Kirjailija(); haru2.vastaaHarukiMurakami(1, "Haruki Murakami");
+     *   String tiedNimi = "testikirjat";    
      *   File ftied = new File(tiedNimi+".dat");
      *   ftied.delete();
      *   kirjailijat.lueTiedostosta(tiedNimi); #THROWS SailoException
@@ -226,38 +246,61 @@ public class Kirjailijat implements Iterable<Kirjailija>{
      * </pre>
      */
     public Kirjailija annaKirjailija(int kirjailijaId)  {
-        Kirjailija tyhja = new Kirjailija();
+        
         for (Kirjailija kir : kirjailijat)
             if (kir.getKirjailijaId() == kirjailijaId) return kir;
-        return tyhja; 
+        return new Kirjailija(); 
     }
-
+    
+    
     /**
+     * Palauttaa annetulla nimellä olevan kirjailijan
+     * @param nimi kirjailijan nimi
+     * @return kirjailija olion
+     */
+    public Kirjailija annaKirjailija(String nimi) {
+        for (Kirjailija kirjailija : kirjailijat)
+            if (kirjailija.getKirjailijanNimi().equals(nimi))
+                return kirjailija;
+        return new Kirjailija();
+    }
+    
+    /**
+     * Kloonaa tietorakenteen muttei sen alkioita,
+     * jotta voidaan poistaa ja lisätä uusia muokkausdialogissa.
+     */
+    @Override
+    public Kirjailijat clone() {
+        Kirjailijat klooni = new Kirjailijat(muutettu, tiedostonPerusNimi);
+        for (Kirjailija kirjailija : kirjailijat)
+            klooni.lisaa(kirjailija, true);
+        return klooni;
+    }
+    
+    /**
+     * Palauttaa tietyn nimisen kirjailijan sen id:llä
+     * @param nimi etsittävän kirjailijan nimi
+     * @return kirjailijan id:n, 0 jos ei löydy
+     */
+    public int getId(String nimi) {
+        for (Kirjailija kirjailija : kirjailijat)
+            if (kirjailija.getKirjailijanNimi().equals(nimi))
+                return kirjailija.getKirjailijaId();
+        return 0;
+    }
+    
+ 
+    /** 
      * Testiohjelma kirjailijoille
      * @param args ei käytössä
      */
     public static void main(String [] args) {
         Kirjailijat kirjailijat = new Kirjailijat();
-        Kirjailija haru1 = new Kirjailija();
-        haru1.vastaaHarukiMurakami(1);
-        Kirjailija haru2 = new Kirjailija();
-        haru2.vastaaHarukiMurakami(2);
-        Kirjailija haru3 = new Kirjailija();
-        haru3.vastaaHarukiMurakami(1);
-        Kirjailija haru4 = new Kirjailija();
-        haru4.vastaaHarukiMurakami(1);
-        
-        kirjailijat.lisaa(haru1);
-        kirjailijat.lisaa(haru2);
-        kirjailijat.lisaa(haru3);
-        kirjailijat.lisaa(haru4);
-        
-        
+ 
         System.out.println("============= Kirjailijat testi =================");
 
         Kirjailija kirjailija = kirjailijat.annaKirjailija(2);
-
-        System.out.print(kirjailija.getKirjailijaId() + " ");
+        System.out.print(kirjailija.getKirjailijaId() + " "); 
         kirjailija.tulosta(System.out);
     }
 

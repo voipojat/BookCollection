@@ -4,11 +4,14 @@ import java.io.*;
 import fi.jyu.mit.ohj2.Mjonot;
 
 /**
+ * Kirjakokoelman kirja, joka tietää omat kenttänsä
+ * ja osaa huolehtia id:stään
+ * 
  * @author antontuominen
  * @version 10 Mar 2020
  *
  */
-public class Kirja {
+public class Kirja implements Cloneable{
     
     private int id;
     private int kirjailijaId;
@@ -19,8 +22,8 @@ public class Kirja {
     private int sivumaara;
     private int arvio;
     
-    private static int seuraavaId;
-    
+    private static int seuraavaId = 1;
+
     /**
      * @return kirjan nimi
      * @example
@@ -34,7 +37,66 @@ public class Kirja {
         return kirjanNimi;
     }
     
+   
+    /**
+     * Palauttaa kirjan kenttien lukumäärän
+     * @return kenttien lukumäärä
+     */
     
+    public int getKenttienLkm() {
+        return 7;
+    }
+
+    /**
+     * Eka kenttä joka on mielekäs kysyttäväksi
+     * @return ekan kentän indeksi
+     */
+    
+    public int ekaKentta() {
+        return 0;
+    }
+    
+    /**
+     * Antaa k:n kentän sisällön merkkijonona
+     * @param k monenenko kentän sisältö palautetaan
+     * @return kentän sisältö merkkijonona
+     */
+    
+    public String anna(int k) {
+        switch ( k ) {
+        case 0: return "" + kirjanNimi;
+        case 1: return "" + kirjanNimi; //sinänsä turha, koska kirjan kirjailija annetaan eri tavalla
+        case 2: return "" + kustantaja;
+        case 3: return "" + vuosi;
+        case 4: return "" + kieli;
+        case 5: return "" + sivumaara;
+        case 6: return "" + arvio;
+     
+        default: return "voi pojat";
+        }
+    }
+
+    /**
+     * Palauttaa k:tta kirjan kenttää vastaavan kysymyksen
+     * @param k kuinka monennen kentän kysymys palautetaan (0-alkuinen)
+     * @return k:netta kenttää vastaava kysymys
+     */
+    
+    public String getKysymys(int k) {
+        switch ( k ) {
+       
+        case 0: return "Kirjan nimi";
+        case 1: return "Kirjailijan nimi";
+        case 2: return "Kustantaja";
+        case 3: return "Vuosi";
+        case 4: return "Kieli";
+        case 5: return "Sivumäärä";
+        case 6: return "Arvio";
+  
+        default: return "Äääliö";
+        }
+    }
+
     /**
      * Apumetodi, jolla saadaan täytettyä testiarvot kirjalle
      */
@@ -49,7 +111,7 @@ public class Kirja {
     
     
     /**
-     * Annetaan kirjalle uusi id sekä kirjailijaId
+     * Annetaan kirjalle uusi id 
      * @return kirjan uusi id
      * @example
      * <pre name="test">
@@ -65,14 +127,11 @@ public class Kirja {
      */
     public int rekisteroi() {
         id = seuraavaId;
-        kirjailijaId = seuraavaId;
         seuraavaId++;
         return id;
     }
 
 
-    
-    
     /**
      * Asettaa id:n ja samalla varmistaa että
      * seuraava numero on aina suurempi kuin tähän mennessä suurin.
@@ -178,11 +237,114 @@ public class Kirja {
         if ( kirja == null ) return false;
         return this.toString().equals(kirja.toString());
     }
+    
+    @Override
+    public Kirja clone()  { 
+        Kirja klooni = new Kirja();
+        klooni.setId(id);
+        klooni.setNimi(kirjanNimi);
+        klooni.setKirjailijaId(kirjailijaId);
+        klooni.setKustantaja(kustantaja);
+        klooni.setVuosi(vuosi);
+        klooni.setKieli(kieli);
+        klooni.setSivumaara(sivumaara);
+        klooni.setArvio(arvio);
+       
+        return klooni;
+    }
+    
+    /**
+     * @return kustantaja
+     */
+    public String getKustantaja() {
+        return kustantaja;
+    }
+    
+    /**
+     * @return kieli
+     */
+    public String getKieli() {
+        return kieli;
+    }
+    
+    /**
+     * @return arvio
+     */
+    public int getArvio() {
+        return arvio;
+    }
+    
+    /**
+     * @return sivumäärä
+     */
+    public int getSivumaara() {
+        return sivumaara;
+    }
+    
 
+    /**
+     * @return kirjan julkaisuvuoden
+     */
+    public int getVuosi() {
+        return vuosi;
+    }
 
     @Override
     public int hashCode() {
         return id;
+    }
+
+    /**
+     * @param text asetettava kirjan nimi
+     */
+    public void setNimi(String text) {
+        this.kirjanNimi = text;
+        
+    }
+
+
+    /**
+     * @param parseInt asetettava vuosi
+     */
+    public void setVuosi(int parseInt) {
+        this.vuosi = parseInt;
+        
+    }
+
+
+    /**
+     * @param text asetettava kieli
+     */
+    public void setKieli(String text) {
+       this.kieli = text;
+        
+    }
+
+
+    /**
+     * @param text asetettava kustantaja
+     */
+    public void setKustantaja(String text) {
+        this.kustantaja = text;
+        
+    }
+
+
+    /**
+     * @param parseInt asetettava sivumäärä
+     */
+    public void setSivumaara(int parseInt) {
+        this.sivumaara = parseInt;
+        
+    }
+
+
+    /**
+     * @param parseInt asetettava arvio
+     */
+    public void setArvio(int parseInt) {
+        this.arvio = parseInt;
+        
     }
 
     /**

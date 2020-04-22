@@ -1,11 +1,14 @@
 package kirjasto;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author antontuominen
- * @version 12 Mar 2020
+ * @version 12 Mar 2020 kirjailijat ja kirjat
+ * @version 19 Apr 2020 viimeistelyä
  *
  */
 public class Kirjakokoelma {
@@ -28,6 +31,31 @@ public class Kirjakokoelma {
     public int getKirjailijat() {
         return kirjailijat.getLkm();
     }
+    
+    /**
+     * @return kirjailjat kloonin
+     */
+    public Kirjailijat annaKirjailijat() {
+        return kirjailijat.clone();
+    }
+    
+    /**
+     * @return kirjat kloonin
+     */
+    public Kirjat annaKirjat() {
+        return kirjat.clone();
+    }
+    
+    /**
+     * Korvaa kirjan tietorakenteessa. Ottaa kirjan omistukseensa. 
+     * Etsitään samalla id:llä oleva kirja. Jos ei löydy, 
+     * niin lisätään uutena kirjana.
+     * @param kirja kirjan viite
+     */
+    public void korvaaTaiLisaa(Kirja kirja)  { 
+        kirjat.korvaaTaiLisaa(kirja); 
+    } 
+
     
     /**
      * Poistaa kirjakokoelmasta ne joilla on nro. 
@@ -119,6 +147,19 @@ public class Kirjakokoelma {
         kirjailijat.setTiedostonPerusNimi(hakemistonNimi + "kirjailijat");
     }
     
+    
+    /**
+     * Poistaa kirjan kirjakokoelmasta
+     * @param kirja joka poistetaan
+     * @return montako kirjaa poistettiin
+     */
+    public int poista(Kirja kirja) {
+        if ( kirja == null ) return 0;
+        int ret = kirjat.poista(kirja.getId());
+        return ret; 
+    }
+
+    
     /**
      * Lukee kirjakokoelman tiedot tiedostosta
      * @param nimi jota käytetään lukemiseen
@@ -134,8 +175,8 @@ public class Kirjakokoelma {
      *  Kirja kafka = new Kirja(); kafka.vastaaKafkaRannalla(); kafka.rekisteroi();
      *  Kirja kafka1 = new Kirja(); kafka1.vastaaKafkaRannalla(); kafka1.rekisteroi();
      *  
-     *  Kirjailija haru = new Kirjailija(); haru.vastaaHarukiMurakami(kafka.getId());
-     *  Kirjailija haru1 = new Kirjailija(); haru1.vastaaHarukiMurakami(kafka1.getId());
+     *  Kirjailija haru = new Kirjailija(); haru.vastaaHarukiMurakami(kafka.getId(), "Haruki Murakami");
+     *  Kirjailija haru1 = new Kirjailija(); haru1.vastaaHarukiMurakami(kafka1.getId(), "Haruki Murakami");
      *  
      *  
      *  String hakemisto = "testikirjat";
@@ -193,9 +234,44 @@ public class Kirjakokoelma {
         }
         if ( !"".equals(virhe) ) throw new SailoException(virhe);
     }
-
-
-
+    
+    
+    /**
+     * Asettaa kirjailijat uusiksi (tallennus)
+     * @param tmpKirjailijat uudet kirjailijat
+     */
+    public void set(Kirjailijat tmpKirjailijat) {
+        kirjailijat = tmpKirjailijat;
+    }
+    
+    
+    /**
+     * Palauttaa hakuehtoon vastaavien kirjojen viitteet 
+     * @param kirjailijaId kirjailijan id, jonka kirjat halutaan
+     * @param kirjaId valitun kirjan id, ei haluta näyttää samaa uudestaan
+     * @return tietorakenne löytyneistä kirjoista
+     * @example
+     * <pre name="test">
+     *   #THROWS CloneNotSupportedException, SailoException
+     *   Kirjakokoelma kirjakokoelma = new Kirjakokoelma();
+     *   Kirja k1 = new Kirja();
+     *   k1.rekisteroi();
+     *   k1.setKirjailijaId(2);
+     *   kirjakokoelma.lisaa(k1); 
+     *   Collection<Kirja> loytyneet = kirjakokoelma.kirjailijanKirjat(2, 1);
+     *   loytyneet.size() === 1;
+     *   Iterator<Kirja> it = loytyneet.iterator();
+     *   it.next() == k1 === true;
+     * </pre>
+     */
+    public Collection<Kirja> kirjailijanKirjat(int kirjailijaId, int kirjaId) {
+        List<Kirja> loytyneet = new ArrayList<Kirja>();
+        for (Kirja kirja : kirjat)
+            if (kirja.getKirjailijaId() == kirjailijaId
+                    && kirja.getId() != kirjaId)
+                loytyneet.add(kirja);
+        return loytyneet;
+    }
 
     /**
      * Testiohjelma kirjakokoelmalle
@@ -215,14 +291,14 @@ public class Kirjakokoelma {
         kirjakokoelma.lisaa(kafka2);
         int id1 = kafka1.getId();
         int id2 = kafka2.getId();
-        Kirjailija haru1 = new Kirjailija(id1); haru1.vastaaHarukiMurakami(id1); kirjakokoelma.lisaa(haru1);
-        Kirjailija haru2 = new Kirjailija(id2); haru2.vastaaHarukiMurakami(id2); kirjakokoelma.lisaa(haru2);
+        Kirjailija haru1 = new Kirjailija(id1); haru1.vastaaHarukiMurakami(id1, "Haruki Murakami"); kirjakokoelma.lisaa(haru1);
+        Kirjailija haru2 = new Kirjailija(id2); haru2.vastaaHarukiMurakami(id2, "Haruki Murakami"); kirjakokoelma.lisaa(haru2);
 
         System.out.println("============= Kirjakokoelman testi =================");
 
         for (int i = 0; i < kirjakokoelma.getKirjat(); i++) {
             Kirja kirja = kirjakokoelma.annaKirja(i);
-            System.out.println("Jäsen paikassa: " + i);
+            System.out.println("Kirja paikassa: " + i);
             kirja.tulosta(System.out);
             Kirjailija loydetty = kirjakokoelma.annaKirjailija(kirja.getKirjailijaId());
             loydetty.tulosta(System.out);
@@ -232,5 +308,6 @@ public class Kirjakokoelma {
     } catch (SailoException ex) {
         System.out.println(ex.getMessage());
     }
+
     }
 }

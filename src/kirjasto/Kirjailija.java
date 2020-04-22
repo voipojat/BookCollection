@@ -2,6 +2,9 @@ package kirjasto;
 import java.io.*;
 import fi.jyu.mit.ohj2.Mjonot;
 /**
+ * Kirjakokoelman kirjailija, joka tietää kenttänsä
+ * ja osaa huolehtia id:stään
+ * 
  * @author antontuominen
  * @version 11 Mar 2020
  *
@@ -10,6 +13,7 @@ public class Kirjailija {
     
     private int id;
     private String kirjailijanNimi = "";
+    private static int seuraavaId = 1;
     
     /**
      * Alustetaan kirjailija
@@ -20,28 +24,58 @@ public class Kirjailija {
 
     /**
      * Alustetaan tietyn kirjan kirjailija
+     * @param text kirjailijan nimi
+     */
+    public Kirjailija(String text) {
+        kirjailijanNimi = text;
+    }
+    
+    /**
+     * Alustetaan tietyn kirjan kirjailija
      * @param kirjailijaId kirjan kirjailijaId
      */
     public Kirjailija(int kirjailijaId) {
         id = kirjailijaId;
     }
-    
+
+    /**
+     * Annetaan kirjailijalle uusi id
+     * @return kirjailijan uusi id
+     * @example
+     * <pre name="test">
+     *  Kirjailija kir1 = new Kirjailija();
+     *  kir1.getKirjailijaId() === 0;
+     *  kir1.rekisteroi();
+     *  Kirjailija kir2 = new Kirjailija();
+     *  kir2.rekisteroi();
+     *  int n1 = kir1.getKirjailijaId();
+     *  int n2 = kir2.getKirjailijaId();
+     *  n1 === n2-1;
+     * </pre>
+     */
+    public int rekisteroi() {
+        id = seuraavaId;
+        seuraavaId++;
+        return id;
+    }
+
     /**
      * Apumetodi, jolla saadaan täytettyä testiarvot Kirjailijalle
      * @param kirjailijaId viite kirjaan, jonka kirjailijasta on kyse
+     * @param text kirjailijan nimi
      * @example
      * <pre name="test">
      *    #import java.io.ByteArrayOutputStream;
      *    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
      *    Kirjailija kir = new Kirjailija();
-     *    kir.vastaaHarukiMurakami(1);
+     *    kir.vastaaHarukiMurakami(1, "Haruki Murakami");
      *    kir.tulosta(outContent);
      *    outContent.toString() === "1 Haruki Murakami\n";
      * </pre>
      */
-    public void vastaaHarukiMurakami(int kirjailijaId) {
+    public void vastaaHarukiMurakami(int kirjailijaId, String text) {
         id = kirjailijaId;
-        kirjailijanNimi = "Haruki Murakami";
+        kirjailijanNimi = text;
     }
     
     /**
@@ -77,12 +111,15 @@ public class Kirjailija {
     }
     
     /**
-     * Asettaa tunnusnumeron ja samalla varmistaa että
+     * Asettaa id:n ja samalla varmistaa että
      * seuraava numero on aina suurempi kuin tähän mennessä suurin.
-     * @param nr asetettava tunnusnumero
+     * @param nr asetettava id
      */
     private void setId(int nr) {
         id = nr;
+        if (id >= seuraavaId)
+            seuraavaId = id + 1;
+
     }
 
     /**
@@ -124,15 +161,14 @@ public class Kirjailija {
         return id;
     }
 
-
-
     /**
      * Testiohjelma Kirjailijalle
      * @param args ei käytössä
      */
     public static void main(String [] args) {
         Kirjailija kirjailija = new Kirjailija();
-        kirjailija.vastaaHarukiMurakami(1);
+        kirjailija.vastaaHarukiMurakami(1, "Haruki Murakami");
+       
         kirjailija.tulosta(System.out);     
     }
 }

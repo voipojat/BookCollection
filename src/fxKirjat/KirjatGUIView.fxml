@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import fi.jyu.mit.fxgui.ComboBoxChooser?>
 <?import fi.jyu.mit.fxgui.ListChooser?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -8,8 +9,6 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitMenuButton?>
-<?import fi.jyu.mit.fxgui.ComboBoxChooser?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -26,6 +25,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
          <children>
+            <Button mnemonicParsing="false" onAction="#handleJarjestys" text="Järjestä parhausjärjestykseen" />
             <Button mnemonicParsing="false" onAction="#handleLisaaKirja" text="Lisää kirja">
                <tooltip>
                   <Tooltip text="Lisää kirja kokoelmaan" />
@@ -36,7 +36,7 @@
                   <Tooltip text="Poista kirja kokoelmasta" />
                </tooltip>
             </Button>
-            <Button mnemonicParsing="false" onAction="#handleMuokkaaKirjaa" text="Muokkaa kirjan tietoja">
+            <Button mnemonicParsing="true" onAction="#handleMuokkaaKirjaa" text="Muokkaa kirjan tietoja">
                <tooltip>
                   <Tooltip text="Muokkaa kirjaa" />
                </tooltip>
@@ -57,7 +57,7 @@
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleLisaaKirja" text="Lisää kirja" />
                   <MenuItem mnemonicParsing="false" onAction="#handlePoistaKirja" text="Poista kirja" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleMuokkaaKirjaa" text="Muokkaa kirjan tietoja" />
+                  <MenuItem mnemonicParsing="true" onAction="#handleMuokkaaKirjaa" text="Muokkaa kirjan tietoja" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Ohje">
@@ -79,7 +79,7 @@
                <VBox BorderPane.alignment="CENTER">
                <children>
                 <Label alignment="CENTER" maxWidth="300.0" text="Haku" />
-               <ComboBoxChooser fx:id="cbKentat" maxWidth="200.0" onAction="#handleHakuehto" rivit="Kirjan nimi&#10; Kirjailijan nimi&#10;"  />
+               <ComboBoxChooser fx:id="cbKentat" maxWidth="200.0" onAction="#handleHakuehto" rivit="Kirjan nimi&#10; Kirjailijan nimi&#10; Kustantaja&#10; Vuosi&#10; Kieli&#10; Sivumaara&#10;  Arvio&#10;" />
                  <TextField fx:id="hakuehto" onKeyReleased="#handleHakuehto" />
                  
                  </children>
@@ -107,7 +107,7 @@
          <center>
             <ScrollPane fx:id="panelKirja" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
                <content>
-                  <GridPane hgap="10.0">
+                  <GridPane fx:id="gridKirja" hgap="10.0">
                     <columnConstraints>
                       <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
                       <ColumnConstraints hgrow="ALWAYS" />
@@ -132,13 +132,13 @@
                         <Label text="Sivumäärä" GridPane.rowIndex="4" />
                         <Label text="Kieli" GridPane.rowIndex="5" />
                         <Label text="Arvio 0-5" GridPane.rowIndex="6" />
-                        <TextField text="Suuri lammasseikkailu" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
-                        <TextField text="Haruki Murakami" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                        <TextField text="Tammi" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                        <TextField text="2009" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-                        <TextField text="352" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
-                        <TextField text="suomi" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
-                        <TextField text="4" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <TextField fx:id="editNimi" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+                        <TextField fx:id="editKirjailija" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                        <TextField fx:id="editKustantaja" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+                        <TextField fx:id="editVuosi" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+                        <TextField fx:id="editSivumaara" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                        <TextField fx:id="editKieli" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
+                        <TextField fx:id="editArvio" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                      </children>
                   </GridPane>
                </content>
@@ -166,7 +166,7 @@
             </Label>
          </top>
          <center>
-            <ListChooser rivit="Kafka rannalla&#10;Norwegian Wood" BorderPane.alignment="CENTER" />
+            <ListChooser fx:id="chooserMuut" rivit="" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </right>

@@ -118,6 +118,10 @@ public class KirjatGUIController implements Initializable{
        
 
     }
+    /**
+     * Asetetaan käyttöliittymään kirjakokoelman nimi
+     * @param title joka annetaan
+     */
     private void setTitle(String title) {
         ModalController.getStage(hakuehto).setTitle(title);
     }
@@ -319,7 +323,9 @@ public class KirjatGUIController implements Initializable{
         this.kirjakokoelma = kirjakokoelma;
         naytaKirja(true);
     }
-    
+    /**
+     * Aliohjelma kirjan muokkaamiseen
+     */
     private void muokkaa()  { 
         if ( kirjaKohdalla == null )
             return;
@@ -340,7 +346,10 @@ public class KirjatGUIController implements Initializable{
        
         hae(kirjaKohdalla.getId());
     } 
-    
+    /**
+     * Järjestetään kirjat arvion mukaan
+     * parhausjärjestykseen
+     */
     private void jarjesta() {
   
         List<Kirja> loytyneet = new ArrayList<Kirja>();

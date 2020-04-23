@@ -99,7 +99,10 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         editNimi.requestFocus();
     }
 
-    
+    /**
+     * Tallennetaan kirja kokoelmaan ja tyhjennetään
+     * varoitukset
+     */
     private void tallenna() {
         
         tyhjennaVaroitukset();
@@ -128,7 +131,9 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         
     }
 
-    
+    /**
+     * Lisätään kirjailija kokoelmaan
+     */
     private void lisaaKirjailija() {
         boolean palataanko = false;
         String nimi = Dialogs.showInputDialog("Anna kirjailijan nimi", "");
@@ -226,7 +231,11 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         editArvio.setText("");
     }
     
-    
+    /**
+     * Tarkistetaan käyttämän antamat syötteet
+     * ennen kuin tallennetaan
+     * @return voidaanko tallentaa vai ei
+     */
     private boolean tarkista() {
         boolean boo = tarkistaNimi();
         if(!boo) return boo;
@@ -241,7 +250,10 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         if(!boo) return boo;
         return true;
     }
-    
+    /**
+     * Tarkistetaan antoiko käyttäjä vuoden numeroina vai ei
+     * @return onko näin vai ei
+     */
     private boolean tarkistaVuosi() {
         Pattern pattern = Pattern.compile("^\\d{4}");
         Matcher m = pattern.matcher(editVuosi.getText());
@@ -253,7 +265,10 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         
         return b;
     }
-    
+    /**
+     * Tarkistetaan antoiko käyttäjä sivumäärän numeroina vai ei
+     * @return onko näin vai ei
+     */
     private boolean tarkistaSivumaara() {
         Pattern pattern = Pattern.compile("[0-9]+");
         Matcher m = pattern.matcher(editSivumaara.getText());
@@ -265,7 +280,10 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         
         return b;
     }
-    
+    /**
+     * Tarkistetaan antoiko käyttäjä arvion asteikolla 1-5
+     * @return antoiko käyttäjä arvion oikein vai
+     */
     private boolean tarkistaArvio() {
         Pattern pattern = Pattern.compile("^(?:[1-5]|0[1-5]|10)$");
         Matcher m = pattern.matcher(editArvio.getText());
@@ -277,7 +295,10 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         
         return b;
     }
-    
+    /**
+     * Tarkistetaan antoiko käyttäjä nimen
+     * @return annettiinko nimi
+     */
     private boolean tarkistaNimi() {
         if(editNimi.getText().length() == 0 ) {
             virheKentta("Anna kirjalle nimi!", editNimi);
@@ -297,13 +318,13 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         labelVirhe.setText(virhe);
         kentta.setStyle("-fx-text-box-border: red ; -fx-focus-color: red ;");
     }
-    
+    /**
+     * Tyhjennetään varoituskentät(otetaan punaset reunat pois)
+     */
     private void tyhjennaVaroitukset() {
-       
         editVuosi.setStyle(null);
         editSivumaara.setStyle(null);
         editArvio.setStyle(null);
-        
     }
 
     @Override

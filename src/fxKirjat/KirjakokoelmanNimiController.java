@@ -8,6 +8,12 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 
+/**
+ * @author antontuominen
+ * @version 23 Apr 2020
+ * Luokka kirjakokoelman nimen valinnan hoitamiseen
+ *
+ */
 public class KirjakokoelmanNimiController implements ModalControllerInterface<String>{
     
     @FXML private TextField textVastaus;

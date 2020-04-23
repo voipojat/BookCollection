@@ -257,7 +257,7 @@ public class Kirjat implements Iterable<Kirja>{
             }
             muutettu = false;
         } catch ( FileNotFoundException e ) {
-            throw new SailoException("Tiedosto " + getTiedostonNimi() + " ei aukea");
+            throw new SailoException("Loit juuri uuden kirjakokoelman!");
         } catch ( IOException e ) {
             throw new SailoException("Ongelmia tiedoston kanssa: " + e.getMessage());
         }

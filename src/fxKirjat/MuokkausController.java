@@ -133,10 +133,12 @@ public class MuokkausController implements ModalControllerInterface<Liima>, Init
         boolean palataanko = false;
         String nimi = Dialogs.showInputDialog("Anna kirjailijan nimi", "");
         for(Kirjailija kir : kirjakokoelma.annaKirjailijat()) {
-            if(kir.getKirjailijanNimi().equalsIgnoreCase(nimi)) palataanko = true;
-             Dialogs.showMessageDialog("Olet lisännyt kirjailijan " + nimi + 
-             " aikaisemmin kokoelmaan!\n" + "Valitse se siis listasta!",
-             dlg -> dlg.getDialogPane().setPrefWidth(400));
+            if(kir.getKirjailijanNimi().equalsIgnoreCase(nimi)) {
+                Dialogs.showMessageDialog("Olet lisännyt kirjailijan " + nimi + 
+                        " aikaisemmin kokoelmaan!\n" + "Valitse se siis listasta!",
+                        dlg -> dlg.getDialogPane().setPrefWidth(400));
+                palataanko = true;
+            }  
         }
         if (nimi == null || palataanko)
             return;
